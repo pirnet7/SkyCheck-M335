@@ -81,26 +81,26 @@ export default function HomeScreen() {
 
   const getLocationAndWeather = async () => {
     setLoading(true);
-
-    // Request location permission
-    let { status } = await Location.requestForegroundPermissionsAsync();
+  
+    let { status } = await Location.getForegroundPermissionsAsync();
+  
     if (status !== 'granted') {
-      Alert.alert('Fehler', 'Zugriff auf Standort wurde verweigert');
-      setLoading(false);
-      return;
+      let { status: newStatus } = await Location.requestForegroundPermissionsAsync();
+      
+      if (newStatus !== 'granted') {
+        Alert.alert('Fehler', 'Zugriff auf Standort wurde verweigert. Bitte in den Einstellungen erlauben.');
+        setLoading(false);
+        return;
+      }
     }
-
-    // Get location
+  
+    // Standort abrufen
     let locationData = await Location.getCurrentPositionAsync({});
     let { latitude, longitude } = locationData.coords;
-
-    // Try to get readable location name
+  
     try {
-      let geoData = await Location.reverseGeocodeAsync({
-        latitude,
-        longitude
-      });
-      
+      let geoData = await Location.reverseGeocodeAsync({ latitude, longitude });
+  
       if (geoData && geoData.length > 0) {
         const address = geoData[0];
         setLocation(address.city || address.region || `${address.street}, ${address.postalCode}`);
@@ -110,8 +110,7 @@ export default function HomeScreen() {
     } catch (error) {
       setLocation(`Lat: ${latitude.toFixed(2)}, Lon: ${longitude.toFixed(2)}`);
     }
-
-    // Get weather data from Open-Meteo
+  
     fetch(`${API_URL}?latitude=${latitude}&longitude=${longitude}&current_weather=true`)
       .then((response) => response.json())
       .then((data) => {
@@ -122,9 +121,10 @@ export default function HomeScreen() {
           lastUpdated: new Date().toISOString()
         });
       })
-      .catch((error) => Alert.alert('Fehler', 'Wetterdaten konnten nicht geladen werden'))
+      .catch(() => Alert.alert('Fehler', 'Wetterdaten konnten nicht geladen werden'))
       .finally(() => setLoading(false));
   };
+  
 
   const searchLocation = async () => {
     if (!manualLocation.trim()) {
