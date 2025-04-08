@@ -232,15 +232,11 @@ export default function HomeScreen() {
             </View>
             <View style={styles.weatherRow}>
               <Ionicons name="thermometer-outline" size={20} color="#FF9500" />
-              <Text style={styles.weatherText}>Temperatur: {weather.temp}°C</Text>
+              <Text style={styles.weatherText}>{weather.temp}°C</Text>
             </View>
             <View style={styles.weatherRow}>
               <Ionicons name="trending-up-outline" size={20} color="#34C759" />
-              <Text style={styles.weatherText}>Wind: {weather.wind} km/h</Text>
-            </View>
-            <View style={styles.weatherRow}>
-              <Ionicons name="body-outline" size={20} color="#5856D6" />
-              <Text style={styles.weatherText}>Gefühlte Temp: {weather.feels_like}°C</Text>
+              <Text style={styles.weatherText}>{weather.wind} km/h</Text>
             </View>
             {lastUpdated && (
               <View style={styles.lastUpdatedContainer}>

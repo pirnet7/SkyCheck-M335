@@ -4,7 +4,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 50,
-    paddingHorizontal: 20,
+    paddingHorizontal: 20, 
     backgroundColor: '#f7f9fc',
   },
   inputContainer: {
@@ -12,6 +12,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     marginBottom: 20,
+    paddingHorizontal: 20, 
   },
   input: {
     flex: 1,
@@ -27,6 +28,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 2,
+    maxWidth: 250, 
   },
   iconButton: {
     backgroundColor: '#007AFF',
@@ -61,6 +63,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 5,
+    marginHorizontal: 15, 
+    alignItems: 'center', 
+    justifyContent: 'center',
   },
   weatherTitle: {
     fontSize: 22,
@@ -71,8 +76,9 @@ const styles = StyleSheet.create({
   },
   weatherRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'center', 
     marginVertical: 8,
+    justifyContent: 'center', 
   },
   weatherText: {
     fontSize: 16,
@@ -87,11 +93,30 @@ const styles = StyleSheet.create({
     paddingTop: 15,
     borderTopWidth: 1,
     borderTopColor: '#eee',
+    justifyContent: 'center', 
   },
   lastUpdatedText: {
     fontSize: 12,
     color: '#999',
     marginLeft: 5,
+  },
+  weatherRecommendation: {
+    marginTop: 20,
+    padding: 20,
+    backgroundColor: '#fff3cd',
+    borderRadius: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 5,
+    marginHorizontal: 15, 
+  },
+  recommendationText: {
+    fontSize: 16,
+    color: '#856404',
+    textAlign: 'center',
+    fontWeight: 'bold',
   },
 });
 
