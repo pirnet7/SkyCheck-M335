@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal } from 'react';
 import {
   StyleSheet,
   View,
@@ -21,10 +21,17 @@ const STORAGE_KEY_LOCATION = 'location_name';
 const STORAGE_KEY_WEEKLY_TIMESTAMP = 'weekly_weather_timestamp';
  
 export default function WeeklyWeatherScreen() {
-  const [weeklyWeather, setWeeklyWeather] = useState(null);
+  const [weeklyWeather, setWeeklyWeather] = useState<{ 
+    date: string; 
+    dayOfWeek: string; 
+    tempMax: number; 
+    tempMin: number; 
+    precipitation: number; 
+    windSpeed: number; 
+  }[] | null>(null);
   const [location, setLocation] = useState('');
   const [loading, setLoading] = useState(false);
-  const [lastUpdated, setLastUpdated] = useState(null);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [refreshing, setRefreshing] = useState(false);
  
   // Lädt gespeicherte Daten beim Komponenten-Mount
@@ -54,7 +61,7 @@ export default function WeeklyWeatherScreen() {
     }
   };
  
-  const saveData = async (weatherData) => {
+  const saveData = async (weatherData: { date: any; dayOfWeek: string; tempMax: any; tempMin: any; precipitation: any; windSpeed: any; }[]) => {
     try {
       const timestamp = new Date().getTime();
      
@@ -110,7 +117,7 @@ export default function WeeklyWeatherScreen() {
     }
   };
  
-  const getCoordinatesForLocation = async (locationName) => {
+  const getCoordinatesForLocation = async (locationName: string) => {
     try {
       const geocodeModule = require('expo-location');
       const geocoded = await geocodeModule.geocodeAsync(locationName);
@@ -130,7 +137,7 @@ export default function WeeklyWeatherScreen() {
     }
   };
  
-  const processWeatherData = (data) => {
+  const processWeatherData = (data: { daily: { time: any[]; temperature_2m_max: { [x: string]: any; }; temperature_2m_min: { [x: string]: any; }; precipitation_probability_max: { [x: string]: any; }; windspeed_10m_max: { [x: string]: any; }; }; }) => {
     return data.daily.time.map((date, index) => {
       return {
         date: date,
@@ -143,12 +150,12 @@ export default function WeeklyWeatherScreen() {
     });
   };
  
-  const formatDayOfWeek = (date) => {
+  const formatDayOfWeek = (date: Date) => {
     const days = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
     return days[date.getDay()];
   };
  
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string | number | Date) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('de-DE', {
       day: '2-digit',
@@ -168,7 +175,7 @@ export default function WeeklyWeatherScreen() {
     });
   };
  
-  const getWeatherIcon = (precipitation, tempMax) => {
+  const getWeatherIcon = (precipitation: number, tempMax: number) => {
     if (precipitation > 50) {
       return "rainy";
     } else if (precipitation > 20) {
@@ -213,7 +220,7 @@ export default function WeeklyWeatherScreen() {
         >
           {weeklyWeather ? (
             <>
-              {weeklyWeather.map((day, index) => (
+              {weeklyWeather.map((day: { dayOfWeek: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; date: any; precipitation: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined; tempMax: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined; tempMin: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; windSpeed: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; }, index: Key | null | undefined) => (
                 <View key={index} style={styles.dayCard}>
                   <View style={styles.dayHeader}>
                     <Text style={styles.dayName}>{day.dayOfWeek}</Text>
@@ -222,7 +229,7 @@ export default function WeeklyWeatherScreen() {
                  
                   <View style={styles.weatherDetails}>
                     <View style={styles.iconContainer}>
-                      <Ionicons name={getWeatherIcon(day.precipitation, day.tempMax)} size={40} color="#007AFF" />
+                      <Ionicons name={getWeatherIcon(Number(day.precipitation) || 0, Number(day.tempMax) || 0)} size={40} color="#007AFF" />
                     </View>
                    
                     <View style={styles.tempContainer}>

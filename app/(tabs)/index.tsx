@@ -23,11 +23,18 @@ const STORAGE_KEY_LOCATION = 'location_name';
 const STORAGE_KEY_TIMESTAMP = 'weather_timestamp';
 
 export default function HomeScreen() {
-  const [weather, setWeather] = useState(null);
+  interface WeatherData {
+    temp: number;
+    wind: number;
+    feels_like: string | number;
+    lastUpdated: string;
+  }
+  
+  const [weather, setWeather] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(false);
   const [location, setLocation] = useState('');
   const [manualLocation, setManualLocation] = useState('');
-  const [lastUpdated, setLastUpdated] = useState(null);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   useEffect(() => {
