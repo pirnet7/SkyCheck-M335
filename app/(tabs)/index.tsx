@@ -17,7 +17,6 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from '../styles/HomeScreen.styles';
 
-
 const API_URL = 'https://api.open-meteo.com/v1/forecast';
 const STORAGE_KEY_WEATHER = 'weather_data';
 const STORAGE_KEY_LOCATION = 'location_name';
@@ -31,12 +30,10 @@ export default function HomeScreen() {
   const [lastUpdated, setLastUpdated] = useState(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  // Lädt gespeicherte Daten beim App-Start
   useEffect(() => {
     loadSavedData();
   }, []);
 
-  // Speichert Daten bei Änderungen
   useEffect(() => {
     if (!isInitialLoad && weather) {
       saveData();
@@ -70,11 +67,9 @@ export default function HomeScreen() {
   const saveData = async () => {
     try {
       const timestamp = new Date().getTime();
-      
       await AsyncStorage.setItem(STORAGE_KEY_WEATHER, JSON.stringify(weather));
       await AsyncStorage.setItem(STORAGE_KEY_LOCATION, location);
       await AsyncStorage.setItem(STORAGE_KEY_TIMESTAMP, timestamp.toString());
-      
       setLastUpdated(new Date(timestamp));
     } catch (error) {
       console.error('Fehler beim Speichern der Daten:', error);
@@ -96,7 +91,6 @@ export default function HomeScreen() {
       }
     }
   
-    // Standort abrufen
     let locationData = await Location.getCurrentPositionAsync({});
     let { latitude, longitude } = locationData.coords;
   
@@ -126,7 +120,6 @@ export default function HomeScreen() {
       .catch(() => Alert.alert('Fehler', 'Wetterdaten konnten nicht geladen werden'))
       .finally(() => setLoading(false));
   };
-  
 
   const searchLocation = async () => {
     if (!manualLocation.trim()) {
@@ -136,7 +129,6 @@ export default function HomeScreen() {
 
     setLoading(true);
     try {
-      // Geocode the location name to get coordinates
       const geocoded = await Location.geocodeAsync(manualLocation);
       
       if (geocoded.length === 0) {
@@ -148,7 +140,6 @@ export default function HomeScreen() {
       const { latitude, longitude } = geocoded[0];
       setLocation(manualLocation);
 
-      // Get weather data for the coordinates
       fetch(`${API_URL}?latitude=${latitude}&longitude=${longitude}&current_weather=true`)
         .then((response) => response.json())
         .then((data) => {
@@ -167,10 +158,8 @@ export default function HomeScreen() {
     }
   };
 
-  // Formatiert das Datum für die Anzeige
   const formatLastUpdated = () => {
     if (!lastUpdated) return '';
-    
     return lastUpdated.toLocaleString('de-DE', {
       day: '2-digit',
       month: '2-digit',
@@ -178,6 +167,18 @@ export default function HomeScreen() {
       hour: '2-digit',
       minute: '2-digit'
     });
+  };
+
+  // Funktion zur Wetterempfehlung
+  const getWeatherRecommendation = () => {
+    if (!weather) return '';
+    
+    if (weather.temp <= 5) return 'Heute eine dicke Jacke mitnehmen, es ist sehr kalt.';
+    if (weather.temp > 5 && weather.temp <= 15) return 'Heute einen Pullover oder leichte Jacke anziehen.';
+    if (weather.temp > 15 && weather.temp <= 25) return 'Heute ein T-Shirt reicht, es ist angenehm warm.';
+    if (weather.temp > 25 && weather.temp <= 30) return 'Heute Sonnencreme auftragen, es wird heiß!';
+    if (weather.temp > 30) return 'Achtung: Es ist sehr heiß! Viel Wasser trinken und Sonne meiden.';
+    return 'Kein spezieller Tipp für heute.';
   };
 
   return (
@@ -248,6 +249,14 @@ export default function HomeScreen() {
             )}
           </View>
         )}
+
+        {/* Weather Recommendations */}
+        {weather && (
+          <View style={styles.weatherRecommendation}>
+            <Text style={styles.recommendationText}>{getWeatherRecommendation()}</Text>
+          </View>
+        )}
+
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
